@@ -1,27 +1,33 @@
-name: Hello World Pipeline
+name: CI Pipeline
 
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  hello-job:
+  test:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v3
-      - name: Print Hello World
-        run: echo 'Hello from GitHub Actions!'
-      - name: Show Current User
-        run: whoami
-      - name: Show Current Directory
-        run: pwd
-      - name: List Files
-        run: ls -la
-      - name: Show System Info
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Show Python version
+        run: python3 --version
+
+      - name: Run Tests
+        run: python3 test_calculator.py
+
+      - name: Show system info on success
+        if: success()
         run: |
-          echo '--- System Information ---'
+          echo 'Tests completed successfully!'
+          echo 'Runner info:'
           uname -a
-          df -a
-          date 
